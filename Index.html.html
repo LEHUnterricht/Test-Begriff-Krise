@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krisenbegriff — Koselleck &amp; Vierhaus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#EEF1FB;
+    --bg-2:#F7E9F5;
+    --surface:#FFFFFF;
+    --ink:#141625;
+    --ink-soft:#6B7086;
+    --ink-faint:#A2A6B8;
+    --accent:#5B4FE8;
+    --accent-soft:#EEEBFD;
+    --k-color:#3B6EF6;
+    --k-soft:#E9F0FE;
+    --v-color:#0EA37E;
+    --v-soft:#E4F8F1;
+    --s-color:#B34FE8;
+    --s-soft:#F6EBFD;
+    --correct:#12A150;
+    --correct-soft:#E4F8ED;
+    --incorrect:#E5484D;
+    --incorrect-soft:#FCE9E9;
+    --border:#E7E8F2;
+    --shadow:0 20px 50px -20px rgba(20,22,37,0.25), 0 4px 14px -6px rgba(20,22,37,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(1100px 500px at 15% -10%, var(--bg-2) 0%, transparent 55%),
+      radial-gradient(900px 600px at 100% 0%, var(--bg-1) 0%, transparent 60%),
+      #FAFAFD;
+    font-family:'Inter', system-ui, sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:40px 16px 90px;
+  }
+  .wrap{ width:100%; max-width:640px; }
+
+  .header{ text-align:center; margin-bottom:28px; }
+  .header .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:600; letter-spacing:.1em;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:6px 14px; border-radius:100px;
+    margin-bottom:16px;
+  }
+  .header h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:clamp(28px,5vw,38px);
+    letter-spacing:-0.02em;
+    margin:0 0 8px;
+    color:var(--ink);
+  }
+  .header p{
+    margin:0; font-size:15px; color:var(--ink-soft);
+  }
+
+  .card{
+    background:var(--surface);
+    border-radius:24px;
+    box-shadow:var(--shadow);
+    border:1px solid var(--border);
+    padding:32px 30px 28px;
+  }
+
+  /* progress pills */
+  .progress-track{
+    display:flex; gap:5px; margin-bottom:22px;
+  }
+  .pip{
+    flex:1; height:6px; border-radius:100px;
+    background:var(--border);
+    transition:background .2s ease;
+  }
+  .pip.done{ background:var(--correct); }
+  .pip.done.wrong{ background:var(--incorrect); }
+  .pip.current{ background:var(--accent); }
+
+  .meta-row{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:18px;
+  }
+  .counter{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; font-weight:600; color:var(--ink-faint); letter-spacing:.04em;
+  }
+  .pill{
+    font-family:'Inter', sans-serif;
+    font-size:12px; font-weight:700;
+    padding:5px 13px; border-radius:100px;
+  }
+  .pill-koselleck{ background:var(--k-soft); color:var(--k-color); }
+  .pill-vierhaus{ background:var(--v-soft); color:var(--v-color); }
+  .pill-synthese{ background:var(--s-soft); color:var(--s-color); }
+  .pill-afb3{
+    background:#FFF3E0; color:#B8720A;
+    font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.04em;
+  }
+
+  .qtext{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600; font-size:21px; line-height:1.4;
+    margin:0 0 22px; letter-spacing:-0.01em;
+  }
+  .qtext-multi{
+    font-family:'Inter', sans-serif;
+    font-weight:500; font-size:15.5px; line-height:1.6;
+    letter-spacing:normal;
+  }
+  .qtext-multi .qline{ display:block; margin-bottom:10px; }
+  .qtext-multi .qline:first-child{
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:17px;
+  }
+
+  .options{ display:flex; flex-direction:column; gap:10px; }
+  .opt{
+    display:flex; align-items:center; gap:13px;
+    background:#FBFBFD;
+    border:1.5px solid var(--border);
+    border-radius:14px;
+    padding:14px 16px;
+    font-size:15.5px; font-weight:500;
+    color:var(--ink);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .opt:hover:not(.locked){
+    border-color:var(--accent);
+    background:var(--accent-soft);
+    transform:translateY(-1px);
+  }
+  .opt:active:not(.locked){ transform:translateY(0); }
+  .opt .letter{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; font-weight:700;
+    color:var(--ink-soft);
+    background:var(--border);
+    border-radius:8px;
+    width:26px; height:26px; min-width:26px;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .15s ease;
+  }
+  .opt.correct{ background:var(--correct-soft); border-color:var(--correct); }
+  .opt.correct .letter{ background:var(--correct); color:#fff; }
+  .opt.incorrect{ background:var(--incorrect-soft); border-color:var(--incorrect); }
+  .opt.incorrect .letter{ background:var(--incorrect); color:#fff; }
+  .opt.locked{ cursor:default; }
+  .opt.dim{ opacity:.45; }
+  .opt .icon{ margin-left:auto; font-size:16px; font-weight:700; }
+
+  .explain{
+    margin-top:16px; padding:14px 16px;
+    border-radius:14px;
+    background:var(--accent-soft);
+    font-size:14px; line-height:1.6; color:var(--ink);
+    display:none;
+  }
+  .explain.show{ display:block; }
+  .explain b{ color:var(--accent); }
+
+  .nav-row{
+    margin-top:24px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .score-live{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px; font-weight:600; color:var(--ink-soft);
+  }
+  .btn{
+    font-family:'Inter', sans-serif;
+    font-size:14px; font-weight:700;
+    background:var(--ink);
+    color:#fff;
+    border:none;
+    padding:13px 24px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .btn:hover{ background:var(--accent); transform:translateY(-1px); }
+  .btn:disabled{ opacity:.3; cursor:not-allowed; transform:none; }
+  .btn.secondary{ background:var(--surface); color:var(--ink); border:1.5px solid var(--border); }
+  .btn.secondary:hover{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent); }
+  .btn.accent{ background:var(--accent); }
+  .btn.accent:hover{ background:#4a3fd6; }
+
+  /* start screen */
+  .start-screen{ text-align:center; }
+  .start-screen .lead{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600; font-size:22px; margin-bottom:12px; letter-spacing:-0.01em;
+  }
+  .start-screen .desc{ font-size:15px; color:var(--ink-soft); line-height:1.6; margin:0 0 24px; }
+  .chip-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:26px; }
+  .chip{
+    font-size:12.5px; font-weight:600;
+    padding:8px 14px; border-radius:100px;
+    background:#F7F7FA; color:var(--ink-soft);
+    border:1px solid var(--border);
+  }
+  .name-field{ text-align:left; margin-bottom:24px; }
+  .name-field label{
+    display:block; font-size:12px; font-weight:600; color:var(--ink-soft);
+    margin-bottom:7px; letter-spacing:.02em;
+  }
+  .name-field input{
+    width:100%; font-family:'Inter', sans-serif; font-size:15px;
+    padding:13px 16px; border:1.5px solid var(--border); border-radius:14px;
+    background:#FBFBFD; color:var(--ink);
+    transition:border-color .15s ease;
+  }
+  .name-field input:focus{ outline:none; border-color:var(--accent); background:#fff; }
+
+  /* result screen */
+  .result{ text-align:center; padding:6px 0 0; }
+  .result .ring-wrap{ position:relative; width:170px; height:170px; margin:0 auto 20px; }
+  .result .score-num{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+  }
+  .result .score-big{
+    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:42px;
+    color:var(--ink); letter-spacing:-0.02em; line-height:1;
+  }
+  .result .score-of{ font-size:13px; color:var(--ink-faint); font-weight:600; margin-top:2px;}
+  .result .verdict{
+    font-size:15.5px; color:var(--ink-soft); line-height:1.6; margin:0 0 24px;
+    max-width:420px; margin-left:auto; margin-right:auto;
+  }
+  .breakdown{ display:flex; gap:10px; justify-content:center; margin-bottom:26px; flex-wrap:wrap; }
+  .bd-item{
+    font-size:12px; font-weight:600; color:var(--ink-soft);
+    background:#F7F7FA; border:1px solid var(--border); border-radius:14px;
+    padding:10px 16px; min-width:88px;
+  }
+  .bd-item b{ display:block; font-family:'Space Grotesk',sans-serif; font-size:18px; color:var(--ink); margin-top:2px; }
+  .btn-group{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
+  .export-hint{
+    font-size:12px; color:var(--correct); font-weight:600;
+    display:none; margin-top:4px;
+  }
+  .export-hint.show{ display:block; }
+
+  @media (max-width:520px){
+    .card{ padding:24px 20px 22px; border-radius:20px; }
+    .qtext{ font-size:19px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <span class="eyebrow">● Geschichte Q1.1 · Theoriebezug A</span>
+    <h1>Der Krisenbegriff</h1>
+    <p>Multiple-Choice-Test zu Koselleck (M1) und Vierhaus (M3/M5)</p>
+  </div>
+  <div class="card" id="cardEl">
+    <div id="cardInner"></div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    topic: "koselleck",
+    q: "Was ist das Hauptziel von Kosellecks Aufsatz „Einige Fragen an die Begriffsgeschichte von ‚Krise‘“?",
+    options: [
+      "Eine allgemeingültige Definition von „Krise“ formulieren",
+      "Nachzeichnen, wie das Wort „Krise“ historisch verwendet wurde",
+      "Beweisen, dass es objektive Kriterien für Krisen gibt",
+      "Eine Chronologie aller großen Krisen der Weltgeschichte erstellen"
+    ],
+    correct: 1,
+    explain: "Koselleck betreibt Begriffsgeschichte: Er untersucht den historischen Sprachgebrauch, nicht die objektive Sache. Genau das unterscheidet ihn von Vierhaus."
+  },
+  {
+    topic: "koselleck",
+    q: "Was meint Koselleck, wenn er schreibt, der inflationäre Wortgebrauch zeuge „mehr von einer diffusen Redeweise“?",
+    options: [
+      "Dass wirklich überall auf der Welt Krisen herrschen",
+      "Dass der häufige Gebrauch des Wortes allein noch keinen Beleg für eine wirkliche Krise liefert",
+      "Dass das Wort „Krise“ nur noch in der Wirtschaft verwendet wird",
+      "Dass Historiker das Wort nicht mehr benutzen sollten"
+    ],
+    correct: 1,
+    explain: "Häufigkeit des Wortgebrauchs ist für Koselleck kein Indiz für eine tatsächliche Krise – das ist der Kern seiner Kritik am inflationären Gebrauch."
+  },
+  {
+    topic: "koselleck",
+    q: "Welches der drei semantischen Modelle beschreibt Krise als Zustand ohne Anfang und Ende?",
+    options: [
+      "Krise als Epochenschwelle",
+      "Krise als Endkrise",
+      "Krise als Dauerkrise",
+      "Krise als Revolution"
+    ],
+    correct: 2,
+    explain: "Modell 1 (Dauerkrise) fasst Geschichte selbst als permanenten Krisenzustand — ohne datierbaren Anfang oder Endpunkt. Formel: „Die Weltgeschichte ist das Weltgericht.“"
+  },
+  {
+    topic: "koselleck",
+    q: "Woher stammt die Formel „Weltgeschichte ist das Weltgericht“ ursprünglich?",
+    options: [
+      "Aus der Bibel, direkt zitiert",
+      "Von Karl Marx",
+      "Von Friedrich Schiller, später von Hegel philosophisch aufgegriffen",
+      "Von Rudolf Vierhaus"
+    ],
+    correct: 2,
+    explain: "Der Vers stammt aus Schillers Gedicht „Resignation“ (1784/85) und wurde von Hegel in seine Geschichtsphilosophie übernommen — kein Historiker, sondern Dichtung und Philosophie."
+  },
+  {
+    topic: "koselleck",
+    q: "Was bedeutet „mutatis mutandis“ im Zusammenhang mit Modell 2 (Epochenschwelle)?",
+    options: [
+      "Die Krise wiederholt sich exakt identisch",
+      "Das Strukturmuster kann sich wiederholen, aber jeweils mit den nötigen Anpassungen",
+      "Die Krise kann niemals wiederkehren",
+      "Es handelt sich um eine rein zukünftige Krise"
+    ],
+    correct: 1,
+    explain: "„Mutatis mutandis“ heißt „mit den nötigen Änderungen“ — das Muster (Verdichtung, Systemsprengung, neue Lage) wiederholt sich, die konkreten Umstände bleiben aber jedes Mal einzigartig."
+  },
+  {
+    topic: "koselleck",
+    q: "Welches der drei Modelle hat seine Wurzel in der christlichen Eschatologie (Jüngstes Gericht)?",
+    options: [
+      "Krise als Dauerkrise",
+      "Krise als Epochenschwelle",
+      "Krise als Endkrise",
+      "Keines der drei"
+    ],
+    correct: 2,
+    explain: "Modell 3 (Endkrise) ist ein reiner Zukunftsbegriff: die eine, letzte, finale Krise — strukturell der säkularisierten Vorstellung vom Jüngsten Gericht entlehnt."
+  },
+  {
+    topic: "koselleck",
+    q: "Das griechische Wort „krísis“ hatte ursprünglich zwei Bedeutungsfelder. Welche?",
+    options: [
+      "Militärisch und wirtschaftlich",
+      "Medizinisch (Wendepunkt einer Krankheit) und juristisch-theologisch (Urteil)",
+      "Geographisch und astronomisch",
+      "Religiös und musikalisch"
+    ],
+    correct: 1,
+    explain: "Medizin: der Wendepunkt einer Krankheit (Hippokrates/Galen). Recht/Theologie: „Urteil“, im Neuen Testament auch für das Jüngste Gericht verwendet."
+  },
+  {
+    topic: "vierhaus",
+    q: "Worin unterscheidet sich Vierhaus' Zugang grundsätzlich von Kosellecks Ansatz?",
+    options: [
+      "Vierhaus schreibt ausschließlich über die Pest, Koselleck nie",
+      "Vierhaus fragt nach objektiven Merkmalen einer Krise, Koselleck nach dem Sprachgebrauch",
+      "Vierhaus lehnt den Begriff „Krise“ komplett ab",
+      "Es gibt keinen Unterschied, beide meinen dasselbe"
+    ],
+    correct: 1,
+    explain: "Vierhaus sucht sachliche, überprüfbare Kriterien für „echte“ historische Krisen — im Unterschied zu Kosellecks sprachlich-deutendem Zugang."
+  },
+  {
+    topic: "vierhaus",
+    q: "Welches Element liefert vor allem M3 (Lexikonartikel), das in M5 nicht im Zentrum steht?",
+    options: [
+      "Die fünf nummerierten Prüfkriterien",
+      "Die Ursachentypologie (natürlich/ökonomisch/sozial/politisch)",
+      "Den Prozess- und Lösungscharakter (renovatio, Reform, Revolution)",
+      "Eine Definition der Pest"
+    ],
+    correct: 2,
+    explain: "M3 betont, dass eine Krise eine renovatio, Reform oder Revolution erfordert — geschieht das nicht, drohen Verfall und Auflösung. Das fehlt in M5 weitgehend."
+  },
+  {
+    topic: "vierhaus",
+    q: "Welches der fünf Merkmale aus M5 beschreibt, dass tatsächliche strukturelle Veränderungen vorliegen müssen — nicht nur ein Gefühl?",
+    options: [
+      "Ungleichmäßiger Verlauf",
+      "Komplexer Charakter",
+      "Krisenbewusstsein",
+      "Objektiver Charakter"
+    ],
+    correct: 3,
+    explain: "Merkmal 4 (objektiver Charakter) verlangt tatsächliche, feststellbare Veränderungen — im Unterschied zu Merkmal 3 (Krisenbewusstsein), das täuschen kann."
+  },
+  {
+    topic: "vierhaus",
+    q: "Warum kann laut Vierhaus das bloße „Krisenbewusstsein“ (Merkmal 3) täuschen?",
+    options: [
+      "Weil Menschen grundsätzlich lügen",
+      "Weil Betroffene eine Veränderung spüren können, ohne Ursachen und Folgen schon zu überblicken",
+      "Weil Krisenbewusstsein nur in der Politik vorkommt",
+      "Weil es das gar nicht geben kann"
+    ],
+    correct: 1,
+    explain: "Menschen können sich verunsichert fühlen, bevor sie beurteilen können, ob tatsächlich eine strukturelle (objektive) Krise vorliegt — subjektives Empfinden und objektiver Befund fallen nicht automatisch zusammen."
+  },
+  {
+    topic: "vierhaus",
+    q: "Welche vier Ursachenkategorien nennt M5 für politisch-soziale Krisen?",
+    options: [
+      "Militärisch, religiös, sprachlich, künstlerisch",
+      "Natürlich, ökonomisch, sozial, politisch",
+      "Persönlich, familiär, regional, national",
+      "Historisch, aktuell, zukünftig, zeitlos"
+    ],
+    correct: 1,
+    explain: "M5 unterscheidet natürliche (z. B. Epidemien), ökonomische (z. B. Preisinflation), soziale (z. B. Klassenkonflikte) und direkte politische Ursachen (z. B. Regierungsversagen)."
+  },
+  {
+    topic: "koselleck",
+    q: "Ein Nachrichtenmagazin verwendet in einer einzigen Woche das Wort „Krise“ für 15 verschiedene Themen — vom leeren Handy-Akku bis zur Weltpolitik. Was würde Koselleck dazu sagen?",
+    options: [
+      "Das beweist, dass tatsächlich 15 wirkliche Krisen gleichzeitig vorliegen",
+      "Das ist ein Beispiel für den inflationären, diffusen Wortgebrauch — die Häufigkeit allein belegt noch keine wirkliche Krise",
+      "Das zeigt, dass Koselleck falsch lag — der Begriff wird zu Recht so oft benutzt",
+      "Das würde Koselleck gar nicht interessieren, da er nur historische Texte analysiert"
+    ],
+    correct: 1,
+    explain: "Genau das kritisiert Koselleck: gehäufter Wortgebrauch zeugt „mehr von einer diffusen Redeweise“ als dass er zur Diagnose der Lage beiträgt (Z. 9–10)."
+  },
+  {
+    topic: "koselleck",
+    q: "Ein Kommentator schreibt: „Wir erleben die eine, letzte Krise der Menschheit — danach gibt es keine Geschichte mehr.“ Welchem Koselleck-Modell entspricht diese Aussage am ehesten?",
+    options: [
+      "Krise als Dauerkrise, weil es kein Ende zu geben scheint",
+      "Krise als Epochenschwelle, weil sich hier vieles verdichtet",
+      "Krise als Endkrise, weil ein einmaliges, finales Ereignis behauptet wird",
+      "Keinem der drei Modelle, da es sich um eine Übertreibung handelt"
+    ],
+    correct: 2,
+    explain: "Die Formulierung „die eine, letzte Krise“ mit einem Ende der Geschichte danach ist genau die Struktur von Modell 3 — ein reiner, finaler Zukunftsbegriff."
+  },
+  {
+    topic: "vierhaus",
+    q: "Manche Forscher warnen bereits seit den 1970er-Jahren vor dem Klimawandel; einen klar bestimmbaren Anfangs- oder Endpunkt gibt es bis heute nicht. Was folgt daraus für Vierhaus' Merkmal 1 (Verlauf mit Beschleunigungen und Verzögerungen)?",
+    options: [
+      "Das Merkmal ist eindeutig erfüllt, da der Klimawandel sehr lange dauert",
+      "Das Merkmal lässt sich nur schwer zweifelsfrei bestätigen, da ein klar erkennbarer Verlauf mit Anfang und Ende fehlt",
+      "Das Merkmal ist irrelevant, weil es nur um Naturkatastrophen geht",
+      "Vierhaus schließt Umweltthemen grundsätzlich aus seiner Theorie aus"
+    ],
+    correct: 1,
+    explain: "Merkmal 1 setzt einen erkennbaren, wenn auch ungleichmäßigen Verlauf voraus. Ohne bestimmbaren Anfangs-/Endpunkt lässt sich das nur eingeschränkt anwenden — ein Beispiel dafür, dass nicht jedes Phänomen glatt in Vierhaus' Raster passt."
+  },
+  {
+    topic: "vierhaus",
+    q: "Ein Land steckt in einer schweren Rezession. Viele Bürger äußern große Sorge, doch die Wirtschaftsdaten zeigen bislang kaum reale strukturelle Veränderungen. Welches Vierhaus-Merkmal ist hier fraglich?",
+    options: [
+      "Ungleichmäßiger Verlauf",
+      "Komplexer Charakter",
+      "Objektiver Charakter — das Krisenbewusstsein ist vorhanden, aber die Sachlage bestätigt es (noch) nicht eindeutig",
+      "Offenheit des Ausgangs"
+    ],
+    correct: 2,
+    explain: "Genau die Differenz zwischen Merkmal 3 (Krisenbewusstsein, das täuschen kann) und Merkmal 4 (objektiver Charakter, tatsächliche Veränderung) wird hier sichtbar."
+  },
+  {
+    topic: "vierhaus",
+    q: "Nach einer schweren Staatskrise ändert sich an den politischen Strukturen nichts — weder Reform noch Revolution folgen. Was sagt M3 (Lexikonartikel) über den wahrscheinlichen weiteren Verlauf?",
+    options: [
+      "Die Krise löst sich von selbst auf, ohne Folgen",
+      "Ohne renovatio, Reform oder Revolution drohen Verfall und Auflösung",
+      "M3 trifft dazu keine Aussage, das behandelt nur M5",
+      "Das bedeutet automatisch, dass gar keine echte Krise vorlag"
+    ],
+    correct: 1,
+    explain: "M3 betont: Wird die Krise nicht durch renovatio, Reform oder Revolution bewältigt, handelt es sich um einen Prozess des Zerfalls und der Auflösung."
+  },
+  {
+    topic: "synthese",
+    q: "Worin liegt der zentrale methodische Kontrast zwischen beiden Theoretikern?",
+    options: [
+      "Koselleck: Wie sprechen wir über Krise? — Vierhaus: Woran erkennen wir eine Krise?",
+      "Koselleck: Was kostet eine Krise? — Vierhaus: Wie lange dauert sie?",
+      "Beide fragen exakt dasselbe, nur mit anderen Worten",
+      "Koselleck untersucht nur die Gegenwart, Vierhaus nur die Antike"
+    ],
+    correct: 0,
+    explain: "Diese Kurzformel bringt den Kernunterschied auf den Punkt: Begriffsgeschichte (Sprache) versus Kriteriologie (Sache)."
+  },
+  {
+    topic: "synthese",
+    afb3: true,
+    q: "Zwei Positionen zu Vierhaus' Merkmal „objektiver Charakter“ stehen sich gegenüber:\n\nA) Dieses Merkmal beschreibt reine, von Sprache und Deutung unabhängige Fakten — Vierhaus stellt damit die Sache selbst fest, nicht nur eine Sichtweise darauf.\n\nB) Auch die Feststellung, was als „tatsächliche strukturelle Veränderung“ gilt, beruht auf einer Deutungsentscheidung — Vierhaus' Objektivitätsanspruch ist damit selbst nicht frei von Interpretation.\n\nWelche Position lässt sich besser mit Kosellecks Grundeinsicht vereinbaren, dass Sprache nie neutral abbildet, sondern immer schon deutet?",
+    options: [
+      "Position A — Vierhaus' Kriterien sind rein sachlich und unabhängig von jeder Sprachfrage",
+      "Beide Positionen sind gleichermaßen vertretbar, da sich die Texte zu dieser Frage nicht eindeutig äußern",
+      "Position B — auch „objektive“ Kriterien setzen eine Entscheidung darüber voraus, was überhaupt als relevante Veränderung zählt"
+    ],
+    correct: 2,
+    explain: "Vertiefungsfrage (AFB III): Nach Kosellecks Grundeinsicht ist Sprache nie neutral. Wenn Vierhaus festlegt, was als „strukturelle Veränderung“ zählt, trifft er selbst eine Deutungsentscheidung — sein Objektivitätsanspruch bleibt damit an Sprache und Interpretation gebunden, auch wenn er das selbst nicht thematisiert. Die zweite Option klingt vorsichtig-ausgewogen, unterschlägt aber, dass Kosellecks Text eine klare Grundhaltung zur Sprachgebundenheit jeder Begriffsbildung liefert."
+  },
+  {
+    topic: "synthese",
+    afb3: true,
+    q: "Zwei Thesen zum Verhältnis von Kosellecks drei semantischen Modellen stehen sich gegenüber:\n\nThese 1: Die drei Modelle sind trennscharfe Kategorien — jedes historische Ereignis lässt sich eindeutig genau einem der drei zuordnen.\n\nThese 2: Die Modelle sind idealtypische Zuspitzungen, die in der historischen Sprache tatsächlich gemischt und unterschiedlich dosiert auftreten.\n\nWelche These entspricht Kosellecks eigener Position im Text?",
+    options: [
+      "These 1 — sonst wäre die Unterscheidung in drei Modelle wissenschaftlich nicht haltbar",
+      "These 2 trifft im Kern zu, gilt nach Koselleck aber nur für die ersten beiden Modelle — die Endkrise beschreibt er als klar abgrenzbaren Sonderfall",
+      "These 2 — Koselleck schreibt ausdrücklich, dass die Modelle „nicht in reiner Form“ auftreten, sondern sich gegenseitig abstützen und gemischt werden"
+    ],
+    correct: 2,
+    explain: "Vertiefungsfrage (AFB III): Koselleck warnt selbst, seine Dreiteilung vereinfache den „historisch tatsächlichen Begriffsgebrauch ungebührlich“, und stellt am Ende klar, dass die aufgeführten Modelle „nicht in reiner Form“ auftreten — diese Aussage bezieht sich ausdrücklich auf alle drei Modelle, nicht nur auf zwei von ihnen. Die zweite Option nimmt These 2 unnötig zurück, indem sie eine Ausnahme erfindet, die der Text so nicht macht."
+  },
+  {
+    topic: "synthese",
+    afb3: true,
+    q: "Zwei Positionen zur Reichweite von Vierhaus' Kriterienkatalog (M5) stehen sich gegenüber:\n\nA) Wer alle fünf Merkmale sorgfältig prüft, kann zweifelsfrei feststellen, ob eine „echte“ historische Krise vorliegt — der Katalog liefert eine eindeutige Ja-Nein-Antwort.\n\nB) Auch nach Prüfung aller fünf Merkmale bleiben Ermessensspielräume — was als „komplex genug“ oder „objektiv genug“ gilt, ist selbst eine Einschätzung. Der Katalog strukturiert die Deutung, ersetzt sie aber nicht.\n\nWelche Position wird durch die Formulierungen in M5 besser gestützt?",
+    options: [
+      "Position A — die fünf Merkmale sind so präzise formuliert, dass eine eindeutige Zuordnung immer möglich ist",
+      "Position A, allerdings nur bei eindeutig politischen Krisen — bei wirtschaftlichen oder sozialen Krisen versagt der Katalog",
+      "Position B — Formulierungen wie „meist ungleichmäßig“ oder „mehrere Lebensbereiche“ sind selbst auslegungsbedürftig, keine scharfen Messwerte"
+    ],
+    correct: 2,
+    explain: "Vertiefungsfrage (AFB III): Vierhaus' Merkmale sind qualitativ formuliert („meist“, „mehrere“, „tatsächliche Veränderungen“) — sie geben eine Prüfrichtung vor, liefern aber keine trennscharfen Schwellenwerte. Die Anwendung bleibt damit selbst eine historische Urteilsleistung, kein mechanisches Abhaken."
+  }
+];
+
+let current = 0;
+let answered = [];
+let selectedIdx = [];
+let score = 0;
+let studentName = "";
+
+const cardInner = document.getElementById('cardInner');
+
+function renderStart(){
+  cardInner.innerHTML = `
+    <div class="start-screen">
+      <p class="lead">21 Fragen. Zwei Theoretiker. Ein Begriff.</p>
+      <p class="desc">Dieser Test prüft euer Verständnis von Kosellecks Begriffsgeschichte (M1) und Vierhaus' Merkmalen historischer Krisen (M3/M5) — inklusive Anwendungsfragen und drei anspruchsvollen Vertiefungsfragen auf hohem Niveau.</p>
+      <div class="chip-row">
+        <span class="chip">9 × Koselleck</span>
+        <span class="chip">8 × Vierhaus</span>
+        <span class="chip">4 × Synthese</span>
+        <span class="chip" style="background:#FFF3E0; color:#B8720A;">3 × AFB III</span>
+      </div>
+      <div class="name-field">
+        <label>Name (für die Ergebnisdatei)</label>
+        <input id="nameInput" type="text" placeholder="Vor- und Nachname">
+      </div>
+      <button class="btn accent" onclick="startQuiz()" style="width:100%;">Test starten →</button>
+    </div>
+  `;
+}
+
+function startQuiz(){
+  const nameEl = document.getElementById('nameInput');
+  studentName = (nameEl && nameEl.value.trim()) ? nameEl.value.trim() : "Ohne Namen";
+  current = 0; answered = []; selectedIdx = []; score = 0;
+  renderQuestion();
+}
+
+function topicPill(t){
+  if(t==="koselleck") return {cls:"pill-koselleck", text:"M1 · KOSELLECK"};
+  if(t==="vierhaus") return {cls:"pill-vierhaus", text:"M3/M5 · VIERHAUS"};
+  return {cls:"pill-synthese", text:"SYNTHESE"};
+}
+
+function renderQuestion(){
+  const item = QUESTIONS[current];
+  const tab = topicPill(item.topic);
+
+  let pipsHtml = QUESTIONS.map((_,i)=>{
+    let cls = "pip";
+    if(i < current) cls += answered[i] ? " done" : " done wrong";
+    if(i === current) cls += " current";
+    return `<div class="${cls}"></div>`;
+  }).join("");
+
+  let optsHtml = item.options.map((opt,i)=>`
+    <div class="opt" data-idx="${i}" onclick="selectOption(${i})">
+      <span class="letter">${String.fromCharCode(65+i)}</span>
+      <span>${opt}</span>
+    </div>
+  `).join("");
+
+  const afb3Badge = item.afb3 ? `<span class="pill pill-afb3">AFB III · VERTIEFUNG</span>` : "";
+  const qHtml = item.q.split("\n").map(line => line.trim() ? `<span class="qline">${line}</span>` : "").filter(Boolean).join("");
+
+  cardInner.innerHTML = `
+    <div class="progress-track">${pipsHtml}</div>
+    <div class="meta-row">
+      <span class="counter">FRAGE ${current+1} / ${QUESTIONS.length}</span>
+      <span style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
+        ${afb3Badge}
+        <span class="pill ${tab.cls}">${tab.text}</span>
+      </span>
+    </div>
+    <div class="qtext ${item.afb3 ? 'qtext-multi' : ''}">${qHtml}</div>
+    <div class="options" id="optsWrap">${optsHtml}</div>
+    <div class="explain" id="explainBox"></div>
+    <div class="nav-row">
+      <span class="score-live">${score} / ${answered.filter(a=>a!==undefined).length} richtig</span>
+      <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>
+        ${current === QUESTIONS.length-1 ? 'Zur Auswertung →' : 'Weiter →'}
+      </button>
+    </div>
+  `;
+}
+
+function selectOption(idx){
+  if(answered[current] !== undefined) return;
+  const item = QUESTIONS[current];
+  const isCorrect = idx === item.correct;
+  answered[current] = isCorrect;
+  selectedIdx[current] = idx;
+  if(isCorrect) score++;
+
+  const opts = document.querySelectorAll('#optsWrap .opt');
+  opts.forEach((el,i)=>{
+    el.classList.add('locked');
+    if(i === item.correct){
+      el.classList.add('correct');
+      el.insertAdjacentHTML('beforeend', '<span class="icon" style="color:var(--correct);">✓</span>');
+    } else if(i === idx){
+      el.classList.add('incorrect');
+      el.insertAdjacentHTML('beforeend', '<span class="icon" style="color:var(--incorrect);">✕</span>');
+    } else {
+      el.classList.add('dim');
+    }
+  });
+
+  const box = document.getElementById('explainBox');
+  box.innerHTML = `<b>${isCorrect ? 'Richtig.' : 'Nicht ganz.'}</b> ${item.explain}`;
+  box.classList.add('show');
+
+  document.getElementById('nextBtn').disabled = false;
+  document.querySelector('.score-live').textContent = `${score} / ${answered.filter(a=>a!==undefined).length} richtig`;
+}
+
+function nextQuestion(){
+  if(current < QUESTIONS.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    renderResult();
+  }
+}
+
+function scoreColor(pct){
+  if(pct >= 80) return "var(--correct)";
+  if(pct >= 50) return "#F5A623";
+  return "var(--incorrect)";
+}
+
+function renderResult(){
+  const total = QUESTIONS.length;
+  const pct = Math.round((score/total)*100);
+  let verdict;
+  if(pct === 100) verdict = "Vollständig durchdrungen — Koselleck und Vierhaus hätten nichts hinzuzufügen.";
+  else if(pct >= 80) verdict = "Sehr sicher. Der Unterschied zwischen Sprachgebrauch und Sachkriterium sitzt.";
+  else if(pct >= 60) verdict = "Solide Grundlage — einige Feinheiten zwischen beiden Theorien lohnen einen zweiten Blick.";
+  else verdict = "Noch etwas unsicher — schaut euch M1, M3 und M5 noch einmal in Ruhe an.";
+
+  const kCount = QUESTIONS.filter(q=>q.topic==="koselleck").length;
+  const vCount = QUESTIONS.filter(q=>q.topic==="vierhaus").length;
+  const sCount = QUESTIONS.filter(q=>q.topic==="synthese").length;
+  let kScore=0, vScore=0, sScore=0;
+  QUESTIONS.forEach((q,i)=>{
+    if(answered[i]){
+      if(q.topic==="koselleck") kScore++;
+      else if(q.topic==="vierhaus") vScore++;
+      else sScore++;
+    }
+  });
+
+  const circumference = 2 * Math.PI * 72;
+  const dash = (pct/100) * circumference;
+  const color = scoreColor(pct);
+
+  cardInner.innerHTML = `
+    <div class="result">
+      <div style="font-size:12px; font-weight:600; color:var(--ink-soft); letter-spacing:.04em; margin-bottom:6px;">ERGEBNIS · ${escapeHtml(studentName)}</div>
+      <div class="ring-wrap">
+        <svg width="170" height="170" viewBox="0 0 170 170">
+          <circle cx="85" cy="85" r="72" fill="none" stroke="#EEEFF6" stroke-width="12"/>
+          <circle cx="85" cy="85" r="72" fill="none" stroke="${color}" stroke-width="12"
+            stroke-linecap="round"
+            stroke-dasharray="${dash} ${circumference}"
+            transform="rotate(-90 85 85)"/>
+        </svg>
+        <div class="score-num">
+          <div class="score-big">${score}/${total}</div>
+          <div class="score-of">${pct}% richtig</div>
+        </div>
+      </div>
+      <p class="verdict">${verdict}</p>
+      <div class="breakdown">
+        <div class="bd-item">Koselleck<b>${kScore}/${kCount}</b></div>
+        <div class="bd-item">Vierhaus<b>${vScore}/${vCount}</b></div>
+        <div class="bd-item">Synthese<b>${sScore}/${sCount}</b></div>
+      </div>
+      <div class="btn-group">
+        <button class="btn accent" onclick="exportResult()">↓ Ergebnis speichern</button>
+        <button class="btn secondary" onclick="startQuiz()">Test wiederholen</button>
+      </div>
+      <p class="export-hint" id="exportHint">Datei gespeichert — bitte per AirDrop oder LMS an die Lehrkraft senden.</p>
+    </div>
+  `;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function exportResult(){
+  const total = QUESTIONS.length;
+  const result = {
+    name: studentName,
+    score: score,
+    total: total,
+    percent: Math.round((score/total)*100),
+    timestamp: new Date().toISOString(),
+    details: QUESTIONS.map((q,i)=>({
+      topic: q.topic,
+      question: q.q,
+      correct: !!answered[i],
+      chosenOption: selectedIdx[i] !== undefined ? q.options[selectedIdx[i]] : null,
+      correctOption: q.options[q.correct]
+    }))
+  };
+  const blob = new Blob([JSON.stringify(result, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeName = studentName.replace(/[^a-zA-Z0-9äöüÄÖÜß_-]+/g, "_");
+  a.href = url;
+  a.download = `Ergebnis_${safeName}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  const hint = document.getElementById('exportHint');
+  if(hint) hint.classList.add('show');
+}
+
+renderStart();
+</script>
+</body>
+</html>
