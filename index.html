@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Krisenbegriff — Koselleck &amp; Vierhaus</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<title>Krisenbegriff — Lernkontrolle (Koselleck &amp; Vierhaus)</title>
 <style>
   :root{
     --bg-1:#EEF1FB;
@@ -37,7 +35,7 @@
       radial-gradient(1100px 500px at 15% -10%, var(--bg-2) 0%, transparent 55%),
       radial-gradient(900px 600px at 100% 0%, var(--bg-1) 0%, transparent 60%),
       #FAFAFD;
-    font-family:'Inter', system-ui, sans-serif;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color:var(--ink);
     display:flex;
     justify-content:center;
@@ -48,7 +46,7 @@
   .header{ text-align:center; margin-bottom:28px; }
   .header .eyebrow{
     display:inline-flex; align-items:center; gap:6px;
-    font-family:'JetBrains Mono', monospace;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
     font-size:11px; font-weight:600; letter-spacing:.1em;
     color:var(--accent);
     background:var(--accent-soft);
@@ -56,7 +54,7 @@
     margin-bottom:16px;
   }
   .header h1{
-    font-family:'Space Grotesk', sans-serif;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight:700; font-size:clamp(28px,5vw,38px);
     letter-spacing:-0.02em;
     margin:0 0 8px;
@@ -92,11 +90,11 @@
     margin-bottom:18px;
   }
   .counter{
-    font-family:'JetBrains Mono', monospace;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
     font-size:12px; font-weight:600; color:var(--ink-faint); letter-spacing:.04em;
   }
   .pill{
-    font-family:'Inter', sans-serif;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-size:12px; font-weight:700;
     padding:5px 13px; border-radius:100px;
   }
@@ -105,22 +103,22 @@
   .pill-synthese{ background:var(--s-soft); color:var(--s-color); }
   .pill-afb3{
     background:#FFF3E0; color:#B8720A;
-    font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:.04em;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; font-size:10.5px; letter-spacing:.04em;
   }
 
   .qtext{
-    font-family:'Space Grotesk', sans-serif;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight:600; font-size:21px; line-height:1.4;
     margin:0 0 22px; letter-spacing:-0.01em;
   }
   .qtext-multi{
-    font-family:'Inter', sans-serif;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight:500; font-size:15.5px; line-height:1.6;
     letter-spacing:normal;
   }
   .qtext-multi .qline{ display:block; margin-bottom:10px; }
   .qtext-multi .qline:first-child{
-    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:17px;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-weight:600; font-size:17px;
   }
 
   .options{ display:flex; flex-direction:column; gap:10px; }
@@ -142,7 +140,7 @@
   }
   .opt:active:not(.locked){ transform:translateY(0); }
   .opt .letter{
-    font-family:'JetBrains Mono', monospace;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
     font-size:12px; font-weight:700;
     color:var(--ink-soft);
     background:var(--border);
@@ -174,11 +172,11 @@
     display:flex; justify-content:space-between; align-items:center;
   }
   .score-live{
-    font-family:'JetBrains Mono', monospace;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
     font-size:12px; font-weight:600; color:var(--ink-soft);
   }
   .btn{
-    font-family:'Inter', sans-serif;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-size:14px; font-weight:700;
     background:var(--ink);
     color:#fff;
@@ -198,7 +196,7 @@
   /* start screen */
   .start-screen{ text-align:center; }
   .start-screen .lead{
-    font-family:'Space Grotesk', sans-serif;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight:600; font-size:22px; margin-bottom:12px; letter-spacing:-0.01em;
   }
   .start-screen .desc{ font-size:15px; color:var(--ink-soft); line-height:1.6; margin:0 0 24px; }
@@ -215,7 +213,7 @@
     margin-bottom:7px; letter-spacing:.02em;
   }
   .name-field input{
-    width:100%; font-family:'Inter', sans-serif; font-size:15px;
+    width:100%; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size:15px;
     padding:13px 16px; border:1.5px solid var(--border); border-radius:14px;
     background:#FBFBFD; color:var(--ink);
     transition:border-color .15s ease;
@@ -230,7 +228,7 @@
     align-items:center; justify-content:center;
   }
   .result .score-big{
-    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:42px;
+    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-weight:700; font-size:42px;
     color:var(--ink); letter-spacing:-0.02em; line-height:1;
   }
   .result .score-of{ font-size:13px; color:var(--ink-faint); font-weight:600; margin-top:2px;}
@@ -244,7 +242,7 @@
     background:#F7F7FA; border:1px solid var(--border); border-radius:14px;
     padding:10px 16px; min-width:88px;
   }
-  .bd-item b{ display:block; font-family:'Space Grotesk',sans-serif; font-size:18px; color:var(--ink); margin-top:2px; }
+  .bd-item b{ display:block; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size:18px; color:var(--ink); margin-top:2px; }
   .btn-group{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
   .export-hint{
     font-size:12px; color:var(--correct); font-weight:600;
@@ -283,6 +281,18 @@ const QUESTIONS = [
     ],
     correct: 1,
     explain: "Koselleck betreibt Begriffsgeschichte: Er untersucht den historischen Sprachgebrauch, nicht die objektive Sache. Genau das unterscheidet ihn von Vierhaus."
+  },
+  {
+    topic: "koselleck",
+    q: "Koselleck schreibt zu Beginn seines Textes, das Wort „Krise“ „indiziere Unsicherheit, Leiden und Prüfung“ und verweise auf eine „unbekannte Zukunft“. Was ist damit gemeint?",
+    options: [
+      "Das Wort beweist, sobald es benutzt wird, dass tatsächlich Leiden vorliegt",
+      "Das Wort zeigt an, dass der Sprechende die Lage als unsicher und bedrohlich empfindet — unabhängig davon, ob objektiv etwas Schlimmes vorliegt",
+      "Koselleck lehnt diese Verwendung des Wortes als sprachlich falsch ab",
+      "Das Wort wird in diesem Sinn nur in medizinischen Zusammenhängen verwendet"
+    ],
+    correct: 1,
+    explain: "Koselleck beschreibt hier die sprachlich-kommunikative Funktion des Wortes: Es zeigt eine Empfindung bzw. Deutung an (Unsicherheit, Leiden, Prüfung), trifft aber noch keine Aussage darüber, ob objektiv tatsächlich eine Krise vorliegt. Genau diese Unterscheidung — was das Wort leistet vs. was objektiv der Fall ist — wird bei Vierhaus zum eigentlichen Thema."
   },
   {
     topic: "koselleck",
@@ -537,10 +547,11 @@ const cardInner = document.getElementById('cardInner');
 function renderStart(){
   cardInner.innerHTML = `
     <div class="start-screen">
-      <p class="lead">21 Fragen. Zwei Theoretiker. Ein Begriff.</p>
+      <div style="display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#8A5A00; background:#FFF3E0; border:1px solid #F0D9A8; border-radius:100px; padding:4px 12px; margin-bottom:14px;">Lernkontrolle · einmalige Durchführung</div>
+      <p class="lead">22 Fragen. Zwei Theoretiker. Ein Begriff.</p>
       <p class="desc">Dieser Test prüft euer Verständnis von Kosellecks Begriffsgeschichte (M1) und Vierhaus' Merkmalen historischer Krisen (M3/M5) — inklusive Anwendungsfragen und drei anspruchsvollen Vertiefungsfragen auf hohem Niveau.</p>
       <div class="chip-row">
-        <span class="chip">9 × Koselleck</span>
+        <span class="chip">10 × Koselleck</span>
         <span class="chip">8 × Vierhaus</span>
         <span class="chip">4 × Synthese</span>
         <span class="chip" style="background:#FFF3E0; color:#B8720A;">3 × AFB III</span>
@@ -703,9 +714,9 @@ function renderResult(){
       </div>
       <div class="btn-group">
         <button class="btn accent" onclick="exportResult()">↓ Ergebnis speichern</button>
-        <button class="btn secondary" onclick="startQuiz()">Test wiederholen</button>
       </div>
       <p class="export-hint" id="exportHint">Datei gespeichert — bitte per AirDrop oder LMS an die Lehrkraft senden.</p>
+      <p style="font-size:11.5px; color:var(--ink-faint); margin-top:10px;">Die Lernkontrolle ist abgeschlossen. Ein erneuter Durchlauf ist in dieser Version nicht vorgesehen.</p>
     </div>
   `;
 }
@@ -726,6 +737,7 @@ function exportResult(){
     timestamp: new Date().toISOString(),
     details: QUESTIONS.map((q,i)=>({
       topic: q.topic,
+      afb3: !!q.afb3,
       question: q.q,
       correct: !!answered[i],
       chosenOption: selectedIdx[i] !== undefined ? q.options[selectedIdx[i]] : null,
